@@ -10,9 +10,14 @@ Import and export opensearch data from and to desired hosts. Useful for data mig
 
 ## Migrate
 
+Clone the repo and then run the following in your shell
+
 ```sh
 # copy and change values
 cp .env.example .env
+
+# install
+pip install -r requirements.txt
 
 # runs the export and creates .csv files for all the indices mentioned
 python opensearch_export.py
