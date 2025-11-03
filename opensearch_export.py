@@ -32,7 +32,7 @@ indexes = [item["index"] for item in response]
 
 # --- Export loop ---
 for index in indexes:
-    time.sleep(200)
+    time.sleep(2)
     print(f"\n🚀 Exporting index: {index}")
 
     output_path = f"data/{index}.csv"
