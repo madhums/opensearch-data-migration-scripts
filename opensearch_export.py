@@ -35,7 +35,7 @@ for index in indexes:
     time.sleep(200)
     print(f"\n🚀 Exporting index: {index}")
 
-    output_path = f"{index}.csv"
+    output_path = f"data/{index}.csv"
     total_docs = 0
     first_write = True
 

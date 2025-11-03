@@ -49,7 +49,7 @@ def parse_possible_dict(val):
     return val
 
 for index in indexes:
-    csv_path = f"{index}.csv"  # or s3://... if stored on S3
+    csv_path = f"data/{index}.csv"  # or s3://... if stored on S3
     print(f"Importing {csv_path} into {index}")
 
     try:
