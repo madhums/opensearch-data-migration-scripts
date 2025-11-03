@@ -1,21 +1,23 @@
-from dotenv import load_dotenv
-import os
-import ast
-import json
 from opensearchpy import OpenSearch, RequestsHttpConnection
+from dotenv import load_dotenv
 import awswrangler as wr
+from pathlib import Path
 import pandas as pd
+import json
+import ast
 import csv
+import os
 
 # --- Load environment variables from .env file if present ---
 load_dotenv()
 
+# --- Configuration ---
 HOST = os.getenv("OPENSEARCH_TARGET_HOST")
 USERNAME = os.getenv("OPENSEARCH_TARGET_USER")
 PASSWORD = os.getenv("OPENSEARCH_TARGET_PASS")
 
-# Create client manually
-client = OpenSearch(
+# --- Create client ---
+search_client = OpenSearch(
     hosts=[{"host": HOST, "port": 9200}],
     http_auth=(USERNAME, PASSWORD),
     use_ssl=True,          # set to True if your server uses HTTPS
@@ -25,50 +27,10 @@ client = OpenSearch(
     connection_class=RequestsHttpConnection
 )
 
-indexes = [
-  "new-forms-ux-ilt-test_workflow_process",
-  "teks.dev_workflow_process_task",
-  "new-forms-ux-ilt-demo_workflow_process_task",
-  "kpi-execution-date_workflow_process",
-  "cd-1920_asset_status",
-  "new-forms-ux-ilt-demo_workflow_process",
-  "cd-1920_workflow_process",
-  "cd-1920_workflow_process_task",
-  "teks.dev_workflow_process",
-  ".opendistro_security",
-  "new-forms-ux-ilt-test_asset_status",
-  "billing_workflow_process_task",
-  "wizard-past-date_asset_status",
-  "workflow_process_task",
-  "cd-1849_workflow_process_task",
-  "labels_workflow_process",
-  "new-forms-ux-ilt_workflow_process",
-  "wizard-past-date_workflow_process",
-  "kpi-execution-date_workflow_process_task",
-  ".kibana_-1657425983_capptions_1",
-  "wizard-past-date_workflow_process_task",
-  "new-forms-ux-ilt_workflow_process_task",
-  "teks.dev_asset_status",
-  "igor-release_asset_status",
-  "igor-release_workflow_process_task",
-  "new-forms-ux-ilt-demo_asset_status",
-  "new-assets_workflow_process_task",
-  "new-forms-ux-ilt-test_workflow_process_task",
-  "kpi-execution-date_asset_status",
-  "labels_workflow_process_task",
-  "tenant-wallet",
-  ".kibana_1",
-  "workflow_process",
-  "apple-auto-onboard_workflow_process_task",
-  "billing_asset_status",
-  "new-forms-ux-ilt_asset_status",
-  "igor-release_workflow_process",
-  "cd-1849_workflow_process",
-  "labels_asset_status",
-  "new-assets_asset_status",
-  "cd-1849_asset_status",
-  "new-assets_workflow_process",
-]
+current_dir = Path(".")
+
+# --- List all .csv files without extension (names of indexes) ---
+indexes = [f.stem for f in current_dir.glob("*.csv") if f.is_file()]
 
 def parse_possible_dict(val):
     """Convert Python-like dict/list strings into real objects."""
@@ -107,7 +69,7 @@ for index in indexes:
 
         # Write documents into destination OpenSearch
         wr.opensearch.index_documents(
-            client=client,
+            client=search_client,
             index=index,
             documents=df.to_dict(orient="records"),
             refresh=True,

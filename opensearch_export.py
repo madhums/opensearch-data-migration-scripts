@@ -1,7 +1,6 @@
-from dotenv import load_dotenv
-import os
-import awswrangler as wr
 from opensearchpy import OpenSearch
+from dotenv import load_dotenv
+import awswrangler as wr
 import pandas as pd
 import time
 import json
@@ -26,56 +25,14 @@ search_client = OpenSearch(
     use_ssl=True,
     verify_certs=True,
 )
+response = search_client.cat.indices(format="json")
 
 # --- List of indexes to export ---
-indexes = [
-  "new-forms-ux-ilt-test_workflow_process",
-  "teks.dev_workflow_process_task",
-  "new-forms-ux-ilt-demo_workflow_process_task",
-  "kpi-execution-date_workflow_process",
-  "cd-1920_asset_status",
-  "new-forms-ux-ilt-demo_workflow_process",
-  "cd-1920_workflow_process",
-  "cd-1920_workflow_process_task",
-  "teks.dev_workflow_process",
-  ".opendistro_security",
-  "new-forms-ux-ilt-test_asset_status",
-  "billing_workflow_process_task",
-  "wizard-past-date_asset_status",
-  "workflow_process_task",
-  "cd-1849_workflow_process_task",
-  "labels_workflow_process",
-  "new-forms-ux-ilt_workflow_process",
-  "wizard-past-date_workflow_process",
-  "kpi-execution-date_workflow_process_task",
-  ".kibana_-1657425983_capptions_1",
-  "wizard-past-date_workflow_process_task",
-  "new-forms-ux-ilt_workflow_process_task",
-  "teks.dev_asset_status",
-  "igor-release_asset_status",
-  "igor-release_workflow_process_task",
-  "new-forms-ux-ilt-demo_asset_status",
-  "new-assets_workflow_process_task",
-  "new-forms-ux-ilt-test_workflow_process_task",
-  "kpi-execution-date_asset_status",
-  "labels_workflow_process_task",
-  "tenant-wallet",
-  ".kibana_1",
-  "workflow_process",
-  "apple-auto-onboard_workflow_process_task",
-  "billing_asset_status",
-  "new-forms-ux-ilt_asset_status",
-  "igor-release_workflow_process",
-  "cd-1849_workflow_process",
-  "labels_asset_status",
-  "new-assets_asset_status",
-  "cd-1849_asset_status",
-  "new-assets_workflow_process",
-]
+indexes = [item["index"] for item in response]
 
 # --- Export loop ---
 for index in indexes:
-    time.sleep(2)
+    time.sleep(200)
     print(f"\n🚀 Exporting index: {index}")
 
     output_path = f"{index}.csv"
