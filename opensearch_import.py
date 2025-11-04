@@ -27,10 +27,15 @@ search_client = OpenSearch(
     connection_class=RequestsHttpConnection
 )
 
-current_dir = Path(".")
+current_dir = Path("./data")
 
 # --- List all .csv files without extension (names of indexes) ---
 indexes = [f.stem for f in current_dir.glob("*.csv") if f.is_file()]
+
+# --- Delete all indexes before importing ---
+for index in indexes:
+    print(f"Deleting index {index} ...")
+    wr.opensearch.delete_index(client=search_client, index=index)
 
 def parse_possible_dict(val):
     """Convert Python-like dict/list strings into real objects."""
